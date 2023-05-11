@@ -22,19 +22,29 @@
 .image {
     display: flex;
     height: 300px;
-    width: 300px;
+    width: 400px;
     flex-direction: row;
     padding: 2px;
 }
-
-.cozy-nest-thumbnail {
+.image-wrapper {
+    position: relative;
     width: 50%;
+    overflow: hidden;
+}
+.cozy-nest-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio while covering the entire container */
 }
 .image-info {
     display: flex;
     flex-direction: column;
     width: 50%;
     font-size: 12px;
+    padding: 0 3px;
     border: 1px solid var(--ae-input-border-color);
     background: var(--ae-input-bg-color);
     color: var(--ae-input-color);

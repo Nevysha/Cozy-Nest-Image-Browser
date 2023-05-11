@@ -53,10 +53,12 @@ export default function CozyImage(props) {
 
   return (
     <div className="image">
-      <img
-        className="cozy-nest-thumbnail"
-        src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
-        alt="image"/>
+      <div className="image-wrapper">
+        <img
+          className="cozy-nest-thumbnail"
+          src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
+          alt="image"/>
+      </div>
       <CozyImageInfo image={props.image}/>
     </div>
   );
