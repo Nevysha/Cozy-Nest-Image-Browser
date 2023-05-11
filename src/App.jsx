@@ -1,8 +1,7 @@
-import {useEffect, useState, useRef, useCallback} from 'react'
+import {useEffect, useState, useCallback} from 'react'
 import './App.css'
-import InfiniteScroll from "react-infinite-scroller";
-import * as PropTypes from "prop-types";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import Browser from "./Browser.jsx";
 
 //connect to server socket
 let _socket = null;
@@ -30,61 +29,7 @@ function getSocket() {
   });
 }
 
-//base url without port
-const baseUrl = window.location.href.split(":")[0] + ":" + window.location.href.split(":")[1]
-const gradioPort = 7860
 
-function Image(props) {
-
-  return (
-    <div className="image">
-      <img
-        className="cozy-nest-thumbnail"
-        src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
-        alt="image"/>
-      <div className="image-info">
-        {JSON.stringify(props.image.metadata)}
-      </div>
-    </div>
-  );
-}
-
-Image.propTypes = {image: PropTypes.any};
-
-function Browser(props) {
-
-  const imagesRef = props.imagesRef;
-
-  const [imagesLoaded, setImagesLoaded] = useState([])
-
-  const loadMore = (page) => {
-    //log state
-    console.log(`page: ${page} imagesLoaded: ${imagesLoaded.length} imagesRef: ${imagesRef.length}`)
-    //load 20 more images
-    setImagesLoaded(imagesLoaded.concat(imagesRef.slice(page*20, page*20+20)))
-  }
-
-  return <div className="browser">
-    <InfiniteScroll //new
-      pageStart={0}
-      loadMore={loadMore}
-      hasMore={imagesLoaded.length < imagesRef.length}
-      loader={<div className="loader">Loading ...</div>}
-    >
-      {imagesLoaded.map((image, index) => {
-        return <Image key={index} image={image}/>
-      })}
-    </InfiniteScroll>
-  </div>;
-}
-
-Browser.propTypes = {
-  pageStart: PropTypes.number,
-  loadMore: PropTypes.func,
-  imagesLoaded: PropTypes.arrayOf(PropTypes.any),
-  imagesRef: PropTypes.any,
-  callbackfn: PropTypes.func
-};
 
 function App() {
 
@@ -125,7 +70,7 @@ function App() {
         onClick={handleClickSendMessage}
         disabled={readyState !== ReadyState.OPEN}
       >Load</button>
-      {images.length > 0 && <Browser key={0} imagesRef={images}/>}
+      <Browser key={0} imagesRef={images}/>
     </>
   )
 }
