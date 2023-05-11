@@ -82,9 +82,13 @@ function App() {
   const [filteredImages, setFilteredImages] = useState([])
   const [searchStr, setSearchStr] = useState('');
 
-  const handleClickSendMessage = useCallback(() => sendMessage(
+  const askForImages = useCallback(() => sendMessage(
     JSON.stringify({what: "images"})), [sendMessage]
   );
+
+  const reconnect = () => {
+    (async () => _socket = await getSocket())();
+  }
 
   //get images from server and set state
   useEffect(() => {
@@ -97,13 +101,13 @@ function App() {
 
   //if images is empty, load images
   useEffect(() => {
-    if (images.length === 0) {
-      handleClickSendMessage()
+    if (images.length === 0 && readyState === ReadyState.OPEN) {
+      askForImages()
     }
     else {
       setFilteredImages(images)
     }
-  }, [images, handleClickSendMessage])
+  }, [images, readyState])
 
   //if searchStr is not empty, filter images
   useEffect(() => {
@@ -148,7 +152,7 @@ function App() {
           <button
             className="nevysha lg primary gradio-button btn"
             style={{marginLeft: '20px', width: '100px'}}
-            onClick={handleClickSendMessage}
+            onClick={askForImages}
             disabled={readyState === ReadyState.OPEN}
           >
             Restart
