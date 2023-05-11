@@ -1,10 +1,38 @@
 //base url without port
 import * as PropTypes from "prop-types";
+import {useState} from "react";
 
 const baseUrl = window.location.href.split(":")[0] + ":" + window.location.href.split(":")[1]
 const gradioPort = 7860
 
 function CozyImageInfo(props) {
+
+  //format date to human readable eg 1683694961.5761478 to yyyy-mm-dd HH:MM:SS
+  const date = new Date(props.image.metadata.date * 1000).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+
+  const model = props.image.metadata.exif.parameters.split("Model: ")[1].split(",")[0]
+  const size = props.image.metadata.exif.parameters.split("Size: ")[1].split(",")[0]
+  const seed = props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]
+  const steps = props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]
+  const sampler = props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]
+
+  return (
+    <div className="image-info">
+      <table>
+        <tbody>
+          <tr><td>Date: </td><td>{date}</td></tr>
+          <tr><td>Model: </td><td>{model}</td></tr>
+          <tr><td>Size: </td><td>{size}</td></tr>
+          <tr><td>Seed: </td><td>{seed}</td></tr>
+          <tr><td>Steps: </td><td>{steps}</td></tr>
+          <tr><td>Sampler: </td><td>{sampler}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CozyFullImageInfo(props) {
 
   //format date to human readable eg 1683694961.5761478 to yyyy-mm-dd HH:MM:SS
   const date = new Date(props.image.metadata.date * 1000).toISOString().replace(/T/, ' ').replace(/\..+/, '')
@@ -31,28 +59,53 @@ function CozyImageInfo(props) {
   const seed = props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]
   const steps = props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]
   const sampler = props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]
+  const modelHash = props.image.metadata.exif.parameters.split("Model hash: ")[1].split(",")[0]
+
+  let formattedAll = props.image.metadata.exif.parameters
+  //replace \n with <br>
+  formattedAll = formattedAll.replace(/\n/g, "<br>")
 
   return (
-    <div className="image-info" onClick={() => console.log(props.image.metadata)}>
+    <div className="image-info">
+      <button
+        className="nevysha lg primary gradio-button btn"
+        onClick={() => props.closeModal()}>
+        Close
+      </button>
       <table>
         <tbody>
-          <tr><td>Date: </td><td>{date}</td></tr>
-          <tr><td>Model: </td><td>{model}</td></tr>
-          <tr><td>Size: </td><td>{size}</td></tr>
-          <tr><td>Seed: </td><td>{seed}</td></tr>
-          <tr><td>Steps: </td><td>{steps}</td></tr>
-          <tr><td>Sampler: </td><td>{sampler}</td></tr>
+        <tr><td>Date: </td><td>{date}</td></tr>
+        <tr><td>Model: </td><td>{model}</td></tr>
+        <tr><td>Model Hash: </td><td>{modelHash}</td></tr>
+        <tr><td>Size: </td><td>{size}</td></tr>
+        <tr><td>Seed: </td><td>{seed}</td></tr>
+        <tr><td>Steps: </td><td>{steps}</td></tr>
+        <tr><td>Sampler: </td><td>{sampler}</td></tr>
         </tbody>
       </table>
+      <div className="blocInfo" dangerouslySetInnerHTML={{__html: formattedAll}} />
     </div>
   );
 }
 
-CozyImageInfo.propTypes = {image: PropTypes.any};
 export default function CozyImage(props) {
 
+  const [showModal, setShowModal] = useState(false);
+
+  function toggleModal() {
+    console.log("close modal")
+    console.log(`showModal: ${showModal}`)
+    setShowModal(!showModal)
+  }
+  function openModal() {
+    if (showModal) return
+    console.log("open modal")
+    console.log(`showModal: ${showModal}`)
+    setShowModal(true)
+  }
+
   return (
-    <div className="image">
+    <div className="image" onClick={openModal}>
       <div className="image-wrapper">
         <img
           className="cozy-nest-thumbnail"
@@ -60,6 +113,15 @@ export default function CozyImage(props) {
           alt="image"/>
       </div>
       <CozyImageInfo image={props.image}/>
+      {showModal && <div className="infoModal">
+        <div className="image-wrapper">
+          <img
+            className="cozy-nest-thumbnail"
+            src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
+            alt="image"/>
+        </div>
+        <CozyFullImageInfo image={props.image} closeModal={toggleModal}/>
+      </div>}
     </div>
   );
 }

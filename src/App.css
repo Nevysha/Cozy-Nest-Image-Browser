@@ -36,7 +36,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100% !important;
     object-fit: cover; /* Maintain aspect ratio while covering the entire container */
 }
 .image-info {
@@ -48,4 +48,45 @@
     border: 1px solid var(--ae-input-border-color);
     background: var(--ae-input-bg-color);
     color: var(--ae-input-color);
+}
+
+.infoModal {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    border: 1px solid var(--ae-input-border-color);
+    background: var(--ae-input-bg-color);
+    color: var(--ae-input-color);
+    display: flex;
+}
+
+.infoModal > .image-wrapper {
+    width: 80%;
+}
+
+.infoModal > .image-wrapper > img {
+    object-fit: contain;
+}
+
+.infoModal > .image-info {
+    width: 20%
+}
+
+.blocInfo {
+    display: block;
+    position: relative;
+    outline: none!important;
+    box-shadow: var(--input-shadow);
+    border: var(--input-border-width) solid var(--input-border-color);
+    border-radius: var(--input-radius);
+    background: var(--input-background-fill);
+    width: 100%;
+    color: var(--body-text-color);
+    font-weight: var(--input-text-weight);
+    font-size: var(--input-text-size);
+    line-height: var(--line-sm);
+    font-family: monospace;
 }
