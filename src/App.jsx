@@ -130,18 +130,28 @@ function App() {
     [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
   }[readyState];
 
+  const connexionStatusStyle = {
+    color:
+      readyState === ReadyState.OPEN
+        ? 'green'
+        : readyState === ReadyState.CONNECTING
+          ? 'orange'
+          : 'red',
+  };
+
   return (
     <>
       <Column>
         <h1>Cozy Nest Image Browser</h1>
         <Row>
-          <span>The WebSocket is currently {connectionStatus}</span>
+          <span>The WebSocket is currently <span className="connexionStatus" style={connexionStatusStyle}>{connectionStatus}</span></span>
           <button
             className="nevysha lg primary gradio-button btn"
+            style={{marginLeft: '20px', width: '100px'}}
             onClick={handleClickSendMessage}
             disabled={readyState === ReadyState.OPEN}
           >
-            Start
+            Restart
           </button>
         </Row>
 

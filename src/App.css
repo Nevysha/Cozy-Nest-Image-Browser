@@ -5,6 +5,10 @@
     flex-direction: column;
     width: 100%;
 }
+.connexionStatus {
+    font-weight: bold;
+    text-transform: uppercase;
+}
 .flex-column {
     display: flex;
     flex-direction: column;
@@ -101,5 +105,12 @@
 
 textarea {
     resize: none;
-    padding: 10px;
+    padding: 8px;
+}
+
+img {
+    filter: blur(20px);
+}
+.infoModal > .image-wrapper > img {
+    filter: blur(50px);
 }
