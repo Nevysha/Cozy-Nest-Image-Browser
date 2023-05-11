@@ -111,9 +111,9 @@ textarea {
     padding: 8px;
 }
 
-img {
-    filter: blur(20px);
-}
-.infoModal > .image-wrapper > img {
-    filter: blur(50px);
-}
+/*img {*/
+/*    filter: blur(20px);*/
+/*}*/
+/*.infoModal > .image-wrapper > img {*/
+/*    filter: blur(50px);*/
+/*}*/
