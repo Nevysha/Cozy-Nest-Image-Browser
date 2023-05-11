@@ -79,7 +79,7 @@ function App() {
   const { sendMessage, lastMessage, readyState }
     = useWebSocket(socketUrl);
   const [images, setImages] = useState([])
-
+  const [filteredImages, setFilteredImages] = useState([])
   const [searchStr, setSearchStr] = useState('');
 
   const handleClickSendMessage = useCallback(() => sendMessage(
@@ -100,6 +100,9 @@ function App() {
     if (images.length === 0) {
       handleClickSendMessage()
     }
+    else {
+      setFilteredImages(images)
+    }
   }, [images, handleClickSendMessage])
 
   //if searchStr is not empty, filter images
@@ -112,7 +115,10 @@ function App() {
         }
         else return false;
       })
-      setImages(filteredImages)
+      setFilteredImages(filteredImages)
+    }
+    else {
+      setFilteredImages(images)
     }
   }, [searchStr])
 
@@ -148,7 +154,7 @@ function App() {
 
 
       </Column>
-      <Browser key={0} imagesRef={images}/>
+      <Browser key={0} imagesRef={filteredImages}/>
     </>
   )
 }
