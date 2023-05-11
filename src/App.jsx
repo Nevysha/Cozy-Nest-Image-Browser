@@ -57,14 +57,14 @@ function getSocket() {
 }
 
 //component to wrap flex row
-function Row(props) {
+export function Row(props) {
   return <div className="flex-row">
     {props.children}
   </div>
 }
 
 //component to wrap flex column
-function Column(props) {
+export function Column(props) {
   return <div className="flex-column">
     {props.children}
   </div>

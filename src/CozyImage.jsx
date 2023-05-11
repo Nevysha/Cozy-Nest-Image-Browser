@@ -1,9 +1,18 @@
 //base url without port
 import * as PropTypes from "prop-types";
 import {useState} from "react";
+import {Row} from "./App.jsx";
 
 const baseUrl = window.location.href.split(":")[0] + ":" + window.location.href.split(":")[1]
 const gradioPort = 7860
+
+function SendTo() {
+  return <Row>
+    <button className="nevysha lg primary gradio-button btn">txt2img</button>
+    <button className="nevysha lg primary gradio-button btn">img2img</button>
+    <button className="nevysha lg primary gradio-button btn">inpainting</button>
+  </Row>;
+}
 
 function CozyImageInfo(props) {
 
@@ -20,14 +29,33 @@ function CozyImageInfo(props) {
     <div className="image-info">
       <table>
         <tbody>
-          <tr><td>Date: </td><td>{date}</td></tr>
-          <tr><td>Model: </td><td>{model}</td></tr>
-          <tr><td>Size: </td><td>{size}</td></tr>
-          <tr><td>Seed: </td><td>{seed}</td></tr>
-          <tr><td>Steps: </td><td>{steps}</td></tr>
-          <tr><td>Sampler: </td><td>{sampler}</td></tr>
+        <tr>
+          <td>Date:</td>
+          <td>{date}</td>
+        </tr>
+        <tr>
+          <td>Model:</td>
+          <td>{model}</td>
+        </tr>
+        <tr>
+          <td>Size:</td>
+          <td>{size}</td>
+        </tr>
+        <tr>
+          <td>Seed:</td>
+          <td>{seed}</td>
+        </tr>
+        <tr>
+          <td>Steps:</td>
+          <td>{steps}</td>
+        </tr>
+        <tr>
+          <td>Sampler:</td>
+          <td>{sampler}</td>
+        </tr>
         </tbody>
       </table>
+      <SendTo/>
     </div>
   );
 }
@@ -84,6 +112,7 @@ function CozyFullImageInfo(props) {
         </tbody>
       </table>
       <div className="blocInfo" dangerouslySetInnerHTML={{__html: formattedAll}} />
+      <SendTo/>
     </div>
   );
 }
