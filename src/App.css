@@ -1,6 +1,6 @@
 #cozy-img-browser-react {
     overflow: hidden;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -24,6 +24,7 @@
     height: 300px;
     width: 300px;
     flex-direction: row;
+    padding: 2px;
 }
 
 .cozy-nest-thumbnail {
@@ -31,6 +32,10 @@
 }
 .image-info {
     display: flex;
-    background-color: black;
+    flex-direction: column;
     width: 50%;
+    font-size: 12px;
+    border: 1px solid var(--ae-input-border-color);
+    background: var(--ae-input-bg-color);
+    color: var(--ae-input-color);
 }

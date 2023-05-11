@@ -3,9 +3,36 @@ import './App.css'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Browser from "./Browser.jsx";
 
+//for dev purpose
+let _DEV = false;
+(function() {
+  // if url is http://localhost:5173/file=extensions/Cozy-Nest/cozy-nest-image-browser
+  if (window.location.href.includes('file=extensions/Cozy-Nest/cozy-nest-image-browser')) {
+    _DEV = true;
+
+    //inject css
+    document.querySelector('body').setAttribute("style", "height: 100vh; overflow: hidden;")
+
+    //inject css link to gradio
+    const linkGradioCss = document.createElement('link');
+    linkGradioCss.rel = 'stylesheet';
+    linkGradioCss.type = 'text/css';
+    linkGradioCss.href = 'http://127.0.0.1:7860/theme.css'
+    document.head.appendChild(linkGradioCss);
+
+    //inject css link to Cozy-Nest
+    const linkCozyNestCss = document.createElement('link');
+    linkCozyNestCss.rel = 'stylesheet';
+    linkCozyNestCss.type = 'text/css';
+    linkCozyNestCss.href = 'http://127.0.0.1:7860/file=extensions/Cozy-Nest/style.css';
+    document.head.appendChild(linkCozyNestCss);
+
+  }
+})()
+
 //connect to server socket
 let _socket = null;
-_socket = await getSocket();
+(async () => _socket = await getSocket())();
 function getSocket() {
   return new Promise(function(resolve, reject) {
     // Check if websocket is already open
@@ -67,6 +94,7 @@ function App() {
       <h1>Cozy Nest Image Browser</h1>
       <span>The WebSocket is currently {connectionStatus}</span>
       <button
+        className="nevysha lg primary gradio-button btn"
         onClick={handleClickSendMessage}
         disabled={readyState !== ReadyState.OPEN}
       >Load</button>
