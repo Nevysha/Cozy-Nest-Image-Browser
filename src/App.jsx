@@ -1,4 +1,4 @@
-import {useEffect, useState, useCallback} from 'react'
+import {useEffect, useState, useCallback, useRef} from 'react'
 import './App.css'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Browser from "./Browser.jsx";
@@ -30,32 +30,6 @@ let _DEV = false;
   }
 })()
 
-//connect to server socket
-let _socket = null;
-(async () => _socket = await getSocket())();
-function getSocket() {
-  return new Promise(function(resolve, reject) {
-    // Check if websocket is already open
-    // if yes, return the socket wrapped into a Promise
-    if (_socket && _socket.readyState === 1) {
-      return resolve(_socket);
-    }
-
-    let socket = new WebSocket('ws://localhost:3333')
-    socket.onopen = () => {
-      console.log('connected')
-      _socket = socket;
-      return resolve(socket);
-    }
-    socket.onmessage = (event) => {
-      console.log('onmessage')
-    }
-    socket.onclose = () => {
-      console.log('disconnected')
-    }
-  });
-}
-
 //component to wrap flex row
 export function Row(props) {
   return <div className="flex-row">
@@ -76,18 +50,42 @@ function App() {
 
   const [socketUrl, setSocketUrl] = useState('ws://localhost:3333');
   const [messageHistory, setMessageHistory] = useState([]);
-  const { sendMessage, lastMessage, readyState }
-    = useWebSocket(socketUrl);
   const [images, setImages] = useState([])
   const [filteredImages, setFilteredImages] = useState([])
   const [searchStr, setSearchStr] = useState('');
+
+  const { sendMessage, lastMessage, readyState, getWebSocket }
+    = useWebSocket(
+      socketUrl,
+      {
+        shouldReconnect: () => true,
+        reconnectAttempts: 10,
+        reconnectInterval: 3000,
+      }
+    );
 
   const askForImages = useCallback(() => sendMessage(
     JSON.stringify({what: "images"})), [sendMessage]
   );
 
   const reconnect = () => {
-    (async () => _socket = await getSocket())();
+
+    if (readyState === ReadyState.OPEN) {
+      console.log('already connected')
+      return;
+    }
+
+    // force a dummy url change
+    setSocketUrl(socketUrl + '?t=' + Date.now())
+
+    if (!_DEV) {
+      // get the #nevyui_sh_options_start_socket button from main gradio app and click it
+      const button = document.querySelector('#nevyui_sh_options_start_socket');
+      button.click();
+    }
+    else {
+      console.log('dev mode - Dummy click on #nevyui_sh_options_start_socket')
+    }
   }
 
   //get images from server and set state
@@ -152,10 +150,10 @@ function App() {
           <button
             className="nevysha lg primary gradio-button btn"
             style={{marginLeft: '20px', width: '100px'}}
-            onClick={askForImages}
+            onClick={reconnect}
             disabled={readyState === ReadyState.OPEN}
           >
-            Restart
+            Connect
           </button>
         </Row>
 
