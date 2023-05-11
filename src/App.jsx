@@ -1,7 +1,8 @@
-import {useEffect, useState, useRef} from 'react'
+import {useEffect, useState, useRef, useCallback} from 'react'
 import './App.css'
 import InfiniteScroll from "react-infinite-scroller";
 import * as PropTypes from "prop-types";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 //connect to server socket
 let _socket = null;
@@ -52,28 +53,25 @@ Image.propTypes = {image: PropTypes.any};
 
 function Browser(props) {
 
-  const imagesRef = props.imagesRef.current;
+  const imagesRef = props.imagesRef;
 
   const [imagesLoaded, setImagesLoaded] = useState([])
-  const [page, setPage] = useState(0)
 
-  const loadMore = () => {
+  const loadMore = (page) => {
     //log state
     console.log(`page: ${page} imagesLoaded: ${imagesLoaded.length} imagesRef: ${imagesRef.length}`)
     //load 20 more images
-    setImagesLoaded(imagesLoaded.concat(imagesRef.current.slice(page*20, page*20+20)))
-    setPage(page+1)
+    setImagesLoaded(imagesLoaded.concat(imagesRef.slice(page*20, page*20+20)))
   }
 
   return <div className="browser">
     <InfiniteScroll //new
-      pageStart={page}
+      pageStart={0}
       loadMore={loadMore}
       hasMore={imagesLoaded.length < imagesRef.length}
       loader={<div className="loader">Loading ...</div>}
-      useWindow={false}
     >
-      {props.imagesLoaded.map((image, index) => {
+      {imagesLoaded.map((image, index) => {
         return <Image key={index} image={image}/>
       })}
     </InfiniteScroll>
@@ -90,35 +88,44 @@ Browser.propTypes = {
 
 function App() {
 
-  const imagesRef = useRef([])
-
+  const [socketUrl, setSocketUrl] = useState('ws://localhost:3333');
+  const [messageHistory, setMessageHistory] = useState([]);
+  const { sendMessage, lastMessage, readyState }
+    = useWebSocket(socketUrl);
+  const [images, setImages] = useState([])
 
 
   //get images from server and set state
   useEffect(() => {
-    async function getImages() {
-
-      if (imagesRef.current.length > 0) return
-
-      const socket = await getSocket();
-
-      console.log("getImages")
-
-      socket.send(JSON.stringify(
-        {what: "images"}
-      ))
-      socket.onmessage = (event) => {
-        imagesRef.current = JSON.parse(event.data).images
-      }
+    if (lastMessage !== null) {
+      const data = JSON.parse(lastMessage.data)
+      if (data.what === 'images') setImages(data.images)
+      setMessageHistory((prev) => prev.concat(lastMessage));
     }
+  }, [lastMessage, setMessageHistory]);
 
-    getImages()
-  }, [])
+  const handleClickSendMessage = useCallback(() => sendMessage(
+    JSON.stringify({what: "images"})), [sendMessage]
+  );
+
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
 
   return (
     <>
       <h1>Cozy Nest Image Browser</h1>
-      {imagesRef.current.length > 0 && <Browser key={0} imagesRef={imagesRef}/>}
+      <span>The WebSocket is currently {connectionStatus}</span>
+      <button
+        onClick={handleClickSendMessage}
+        disabled={readyState !== ReadyState.OPEN}
+      >Load</button>
+      {images.length > 0 && <Browser key={0} imagesRef={images}/>}
     </>
   )
 }
