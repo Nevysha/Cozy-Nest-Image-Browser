@@ -5,6 +5,14 @@
     flex-direction: column;
     width: 100%;
 }
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
 .browser {
     height: 100%;
     overflow-y: scroll;
@@ -75,7 +83,7 @@
     width: 20%
 }
 
-.blocInfo {
+.blocInfo, textarea {
     display: block;
     position: relative;
     outline: none!important;
@@ -89,4 +97,9 @@
     font-size: var(--input-text-size);
     line-height: var(--line-sm);
     font-family: monospace;
+}
+
+textarea {
+    resize: none;
+    padding: 10px;
 }

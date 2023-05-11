@@ -56,6 +56,20 @@ function getSocket() {
   });
 }
 
+//component to wrap flex row
+function Row(props) {
+  return <div className="flex-row">
+    {props.children}
+  </div>
+}
+
+//component to wrap flex column
+function Column(props) {
+  return <div className="flex-column">
+    {props.children}
+  </div>
+}
+
 
 
 function App() {
@@ -80,6 +94,12 @@ function App() {
     JSON.stringify({what: "images"})), [sendMessage]
   );
 
+  //if images is empty, load images
+  useEffect(() => {
+    if (images.length === 0) {
+      handleClickSendMessage()
+    }
+  }, [images, handleClickSendMessage])
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -91,13 +111,23 @@ function App() {
 
   return (
     <>
-      <h1>Cozy Nest Image Browser</h1>
-      <span>The WebSocket is currently {connectionStatus}</span>
-      <button
-        className="nevysha lg primary gradio-button btn"
-        onClick={handleClickSendMessage}
-        disabled={readyState !== ReadyState.OPEN}
-      >Load</button>
+      <Column>
+        <h1>Cozy Nest Image Browser</h1>
+        <Row>
+          <span>The WebSocket is currently {connectionStatus}</span>
+          <button
+            className="nevysha lg primary gradio-button btn"
+            onClick={handleClickSendMessage}
+            disabled={readyState === ReadyState.OPEN}
+          >
+            Start
+          </button>
+        </Row>
+
+        <textarea data-testid="textbox" className="scroll-hide svelte-1pie7s6" placeholder="" rows="1"
+                  data-lt-tmp-id="lt-526684" spellCheck="false"
+                  data-gramm="false"></textarea>
+      </Column>
       <Browser key={0} imagesRef={images}/>
     </>
   )
