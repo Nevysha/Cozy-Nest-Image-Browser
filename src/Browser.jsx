@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CozyImage from "./CozyImage.jsx";
 
 export default function Browser(props) {
@@ -6,6 +6,11 @@ export default function Browser(props) {
   const imagesRef = props.imagesRef;
 
   const [imagesLoaded, setImagesLoaded] = useState([])
+
+  //when imagesRef changes, reset imagesLoaded
+  useEffect(() => {
+    setImagesLoaded([])
+  }, [imagesRef])
 
   //load 20 images on mount when imagesRef is set
   if (imagesRef.length > 0 && imagesLoaded.length === 0) {

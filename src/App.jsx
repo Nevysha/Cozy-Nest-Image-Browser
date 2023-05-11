@@ -80,6 +80,11 @@ function App() {
     = useWebSocket(socketUrl);
   const [images, setImages] = useState([])
 
+  const [searchStr, setSearchStr] = useState('');
+
+  const handleClickSendMessage = useCallback(() => sendMessage(
+    JSON.stringify({what: "images"})), [sendMessage]
+  );
 
   //get images from server and set state
   useEffect(() => {
@@ -90,16 +95,26 @@ function App() {
     }
   }, [lastMessage, setMessageHistory]);
 
-  const handleClickSendMessage = useCallback(() => sendMessage(
-    JSON.stringify({what: "images"})), [sendMessage]
-  );
-
   //if images is empty, load images
   useEffect(() => {
     if (images.length === 0) {
       handleClickSendMessage()
     }
   }, [images, handleClickSendMessage])
+
+  //if searchStr is not empty, filter images
+  useEffect(() => {
+    if (searchStr !== '') {
+      const filteredImages = images.filter(image => {
+        if (image.metadata.exif.parameters.includes(searchStr)) {
+          console.log(`path: ${image.path}`)
+          return true;
+        }
+        else return false;
+      })
+      setImages(filteredImages)
+    }
+  }, [searchStr])
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -124,9 +139,14 @@ function App() {
           </button>
         </Row>
 
-        <textarea data-testid="textbox" className="scroll-hide svelte-1pie7s6" placeholder="" rows="1"
-                  data-lt-tmp-id="lt-526684" spellCheck="false"
-                  data-gramm="false"></textarea>
+        <textarea data-testid="textbox"
+                  placeholder=""
+                  rows="1"
+                  spellCheck="false"
+                  data-gramm="false"
+                  onChange={(e) => setSearchStr(e.target.value)}/>
+
+
       </Column>
       <Browser key={0} imagesRef={images}/>
     </>
