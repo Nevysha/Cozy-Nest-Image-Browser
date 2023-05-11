@@ -32,7 +32,7 @@ export default function Browser(props) {
     setImagesLoaded(imagesLoaded.concat(imagesRef.slice(page*20, page*20+20)))
   }
 
-  return <div className="browser" onScroll={() => maybeLoadMore()}>
+  return <div className="browser nevysha nevysha-scrollable" onScroll={() => maybeLoadMore()}>
     {imagesLoaded.map((image, index) => {
       return <CozyImage key={index} image={image}/>
     })}
