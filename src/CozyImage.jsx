@@ -1,16 +1,35 @@
 //base url without port
 import * as PropTypes from "prop-types";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {Row} from "./App.jsx";
 
 const baseUrl = window.location.href.split(":")[0] + ":" + window.location.href.split(":")[1]
 const gradioPort = 7860
 
-function SendTo() {
+function SendTo(props) {
+
+  const sendToPipe = (e, where) => {
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (window.sendToPipe) {
+      window.sendToPipe(where, props.imgRef.current)
+    } else {
+      console.log(`mock sendToPipe(${where}, ${props.imgRef.current.src})`)
+    }
+  }
+
   return <Row>
-    <button className="nevysha lg primary gradio-button btn">txt2img</button>
-    <button className="nevysha lg primary gradio-button btn">img2img</button>
-    <button className="nevysha lg primary gradio-button btn">inpainting</button>
+    <button className="nevysha lg primary gradio-button btn"
+            onClick={(e) => sendToPipe(e, 'txt2img')}
+    >txt2img</button>
+    <button className="nevysha lg primary gradio-button btn"
+            onClick={(e) => sendToPipe(e, 'img2img')}
+    >img2img</button>
+    <button className="nevysha lg primary gradio-button btn"
+            onClick={(e) => sendToPipe(e, 'inpainting')}
+    >inpainting</button>
   </Row>;
 }
 
@@ -55,7 +74,7 @@ function CozyImageInfo(props) {
         </tr>
         </tbody>
       </table>
-      <SendTo/>
+      <SendTo imgRef={props.imgRef}/>
     </div>
   );
 }
@@ -112,7 +131,7 @@ function CozyFullImageInfo(props) {
         </tbody>
       </table>
       <div className="blocInfo" dangerouslySetInnerHTML={{__html: formattedAll}} />
-      <SendTo/>
+      <SendTo imgRef={props.imgRef}/>
     </div>
   );
 }
@@ -120,6 +139,7 @@ function CozyFullImageInfo(props) {
 export default function CozyImage(props) {
 
   const [showModal, setShowModal] = useState(false);
+  const imgRef = useRef(null);
 
   function toggleModal() {
     console.log("close modal")
@@ -128,8 +148,6 @@ export default function CozyImage(props) {
   }
   function openModal() {
     if (showModal) return
-    console.log("open modal")
-    console.log(`showModal: ${showModal}`)
     setShowModal(true)
   }
 
@@ -139,9 +157,10 @@ export default function CozyImage(props) {
         <img
           className="cozy-nest-thumbnail"
           src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
-          alt="image"/>
+          alt="image"
+          ref={imgRef}/>
       </div>
-      <CozyImageInfo image={props.image}/>
+      <CozyImageInfo image={props.image} imgRef={imgRef}/>
       {showModal && <div className="infoModal">
         <div className="image-wrapper">
           <img
@@ -149,7 +168,7 @@ export default function CozyImage(props) {
             src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
             alt="image"/>
         </div>
-        <CozyFullImageInfo image={props.image} closeModal={toggleModal}/>
+        <CozyFullImageInfo image={props.image} closeModal={toggleModal} imgRef={imgRef}/>
       </div>}
     </div>
   );
