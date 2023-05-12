@@ -172,9 +172,9 @@ export default function CozyImage(props) {
   }
 
   return (
-    <div id={`img_${props.index}`} className="image" onClick={openModal} ref={_me}>
+    <div id={`img_${props.index}`} className="image" ref={_me}>
       {onScreen ? (<>
-        <div className="image-wrapper">
+        <div className="image-wrapper" onClick={openModal}>
           <img
             className="cozy-nest-thumbnail"
             src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
