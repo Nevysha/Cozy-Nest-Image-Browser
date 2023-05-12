@@ -16,5 +16,5 @@ export default defineConfig({
       }
     }
   },
-  base: '/Cozy-Nest/cozy-nest-image-browser',
+  base: 'file=extensions/Cozy-Nest/cozy-nest-image-browser',
 })
