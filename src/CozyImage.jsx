@@ -1,6 +1,6 @@
 //base url without port
 import * as PropTypes from "prop-types";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Row} from "./App.jsx";
 
 const baseUrl = window.location.href.split(":")[0] + ":" + window.location.href.split(":")[1]
@@ -138,8 +138,28 @@ function CozyFullImageInfo(props) {
 
 export default function CozyImage(props) {
 
+  const viewPort = props.viewPort
+
   const [showModal, setShowModal] = useState(false);
   const imgRef = useRef(null);
+  const _me = useRef(null);
+
+  const [onScreen, setOnScreen] = useState(false);
+
+  useEffect(() => {
+
+    const top = _me.current.offsetTop
+    const isOnScreen =
+      top >= viewPort.top && top <= (viewPort.bottom + _me.current.offsetHeight) ||
+      (top + _me.current.offsetHeight) >= viewPort.top && (top + _me.current.offsetHeight) <= viewPort.bottom
+
+    if (isOnScreen) {
+      setOnScreen(true)
+    }
+    else {
+      setOnScreen(false)
+    }
+  }, [viewPort])
 
   function toggleModal() {
     console.log("close modal")
@@ -152,24 +172,26 @@ export default function CozyImage(props) {
   }
 
   return (
-    <div className="image" onClick={openModal}>
-      <div className="image-wrapper">
-        <img
-          className="cozy-nest-thumbnail"
-          src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
-          alt="image"
-          ref={imgRef}/>
-      </div>
-      <CozyImageInfo image={props.image} imgRef={imgRef}/>
-      {showModal && <div className="infoModal">
+    <div id={`img_${props.index}`} className="image" onClick={openModal} ref={_me}>
+      {onScreen ? (<>
         <div className="image-wrapper">
           <img
             className="cozy-nest-thumbnail"
             src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
-            alt="image"/>
+            alt="image"
+            ref={imgRef}/>
         </div>
-        <CozyFullImageInfo image={props.image} closeModal={toggleModal} imgRef={imgRef}/>
-      </div>}
+        <CozyImageInfo image={props.image} imgRef={imgRef}/>
+        {showModal && <div className="infoModal">
+          <div className="image-wrapper">
+            <img
+              className="cozy-nest-thumbnail"
+              src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
+              alt="image"/>
+          </div>
+          <CozyFullImageInfo image={props.image} closeModal={toggleModal} imgRef={imgRef}/>
+        </div>}
+      </>) : (<div className="image image-placeholder"/>)}
     </div>
   );
 }
