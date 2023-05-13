@@ -104,6 +104,10 @@ function App() {
         }
         setImages(data.images)
       }
+      if (data.what === 'dispatch_on_image_saved') {
+        //add at the beginning of the array
+        setImages(prev => [data.data, ...prev])
+      }
       setMessageHistory((prev) => prev.concat(lastMessage));
     }
   }, [lastMessage, setMessageHistory]);
