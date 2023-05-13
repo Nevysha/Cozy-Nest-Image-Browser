@@ -44,11 +44,20 @@ export function Column(props) {
   </div>
 }
 
+const serverPort = (() => {
+  try {
+    return document.querySelector('#cnib_socket_server_port > label > textarea').value
+  }
+  catch (e) {
+    console.warn('cnib_socket_server_port not found in main gradio app')
+    return 3333;
+  }
 
+})();
 
 function App() {
 
-  const [socketUrl, setSocketUrl] = useState('ws://localhost:3333');
+  const [socketUrl, setSocketUrl] = useState(`ws://localhost:${serverPort}`);
   const [messageHistory, setMessageHistory] = useState([]);
   const [images, setImages] = useState([])
   const [filteredImages, setFilteredImages] = useState([])
