@@ -53,6 +53,7 @@ function App() {
   const [images, setImages] = useState([])
   const [filteredImages, setFilteredImages] = useState([])
   const [searchStr, setSearchStr] = useState('');
+  const [emptyFetch, setEmptyFetch] = useState(false);
 
   const { sendMessage, lastMessage, readyState, getWebSocket }
     = useWebSocket(
@@ -92,14 +93,21 @@ function App() {
   useEffect(() => {
     if (lastMessage !== null) {
       const data = JSON.parse(lastMessage.data)
-      if (data.what === 'images') setImages(data.images)
+      if (data.what === 'images') {
+        if (data.images.length === 0) {
+          console.warn('Received empty images array from socket')
+          //disable images fetch loop
+          setEmptyFetch(true)
+        }
+        setImages(data.images)
+      }
       setMessageHistory((prev) => prev.concat(lastMessage));
     }
   }, [lastMessage, setMessageHistory]);
 
   //if images is empty, load images
   useEffect(() => {
-    if (images.length === 0 && readyState === ReadyState.OPEN) {
+    if (images.length === 0 && readyState === ReadyState.OPEN && !emptyFetch) {
       askForImages()
     }
     else {
