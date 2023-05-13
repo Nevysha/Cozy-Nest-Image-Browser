@@ -65,6 +65,9 @@ function App() {
       }
     );
 
+  //cheat to get the websocket object
+  window.ws = getWebSocket();
+
   const askForImages = useCallback(() => sendMessage(
     JSON.stringify({what: "images"})), [sendMessage]
   );
