@@ -168,7 +168,7 @@ function App() {
   return (
     <>
       <Column>
-        <h1>Cozy Nest Image Browser</h1>
+        <h1 className="cnib-title">Cozy Nest Image Browser <span className="beta-emphasis">beta</span></h1>
         <Row>
           <span>The WebSocket is currently <span className="connexionStatus" style={connexionStatusStyle}>{connectionStatus}</span></span>
           <button
