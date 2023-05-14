@@ -2,6 +2,7 @@ import {useEffect, useState, useCallback, useRef} from 'react'
 import './App.css'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Browser from "./Browser.jsx";
+import {MockImageBrowser} from "../MockImageBrowser.jsx";
 
 //for dev purpose
 let _DEV = false;
@@ -55,7 +56,19 @@ const serverPort = (() => {
 
 })();
 
+const config = JSON.parse(localStorage.getItem('COZY_NEST_CONFIG'))
+const disable_image_browser =
+    config['disable_image_browser']
+
 function App() {
+
+  if (disable_image_browser) {
+    return (
+        <>
+          <MockImageBrowser/>
+        </>
+    )
+  }
 
   const [socketUrl, setSocketUrl] = useState(`ws://localhost:${serverPort}`);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -64,11 +77,12 @@ function App() {
   const [searchStr, setSearchStr] = useState('');
   const [emptyFetch, setEmptyFetch] = useState(false);
 
+
   const { sendMessage, lastMessage, readyState, getWebSocket }
     = useWebSocket(
       socketUrl,
       {
-        shouldReconnect: () => true,
+        shouldReconnect: () => disable_image_browser,
         reconnectAttempts: 10,
         reconnectInterval: 3000,
       }
