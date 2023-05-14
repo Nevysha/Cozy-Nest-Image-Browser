@@ -33,16 +33,29 @@ function SendTo(props) {
   </Row>;
 }
 
+const safeExifSplit = (fn) => {
+    try {
+        return fn()
+    } catch (ignored) {
+      return 'Error parsing metadata'
+    }
+}
+
 function CozyImageInfo(props) {
 
   //format date to human readable eg 1683694961.5761478 to yyyy-mm-dd HH:MM:SS
   const date = new Date(props.image.metadata.date * 1000).toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-  const model = props.image.metadata.exif.parameters.split("Model: ")[1].split(",")[0]
-  const size = props.image.metadata.exif.parameters.split("Size: ")[1].split(",")[0]
-  const seed = props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]
-  const steps = props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]
-  const sampler = props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]
+  const model =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Model: ")[1].split(",")[0]);
+  const size =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Size: ")[1].split(",")[0]);
+  const seed =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]);
+  const steps =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]);
+  const sampler =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]);
 
   return (
     <div className="image-info">
@@ -101,12 +114,18 @@ function CozyFullImageInfo(props) {
   Negative prompt: (worst quality, low quality:1.4), (monochrome), zombie, easynegative, bad-hands-5,
   Steps: 20, Sampler: DPM++ 2M Karras v2, CFG scale: 7, Seed: 1397741187, Size: 512x512, Model hash: 4199bcdd14, Model: revAnimated_v122, Clip skip: 2"
   */
-  const model = props.image.metadata.exif.parameters.split("Model: ")[1].split(",")[0]
-  const size = props.image.metadata.exif.parameters.split("Size: ")[1].split(",")[0]
-  const seed = props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]
-  const steps = props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]
-  const sampler = props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]
-  const modelHash = props.image.metadata.exif.parameters.split("Model hash: ")[1].split(",")[0]
+  const model =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Model: ")[1].split(",")[0]);
+  const size =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Size: ")[1].split(",")[0]);
+  const seed =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Seed: ")[1].split(",")[0]);
+  const steps =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Steps: ")[1].split(",")[0]);
+  const sampler =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Sampler: ")[1].split(",")[0]);
+  const modelHash =
+      safeExifSplit(() => props.image.metadata.exif.parameters.split("Model hash: ")[1].split(",")[0]);
 
   let formattedAll = props.image.metadata.exif.parameters
   //replace \n with <br>
