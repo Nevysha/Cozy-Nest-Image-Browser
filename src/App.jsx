@@ -56,9 +56,14 @@ const serverPort = (() => {
 
 })();
 
-const config = JSON.parse(localStorage.getItem('COZY_NEST_CONFIG'))
-const disable_image_browser =
+let config;
+let disable_image_browser;
+if (!_DEV) {
+  config = JSON.parse(localStorage.getItem('COZY_NEST_CONFIG'))
+  disable_image_browser =
     config['disable_image_browser']
+}
+
 
 function App() {
 
