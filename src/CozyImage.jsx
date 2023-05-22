@@ -128,8 +128,14 @@ function CozyFullImageInfo(props) {
       safeExifSplit(() => props.image.metadata.exif.split("Model hash: ")[1].split(",")[0]);
 
   let formattedAll = props.image.metadata.exif
-  //replace \n with <br>
-  formattedAll = formattedAll.replace(/\n/g, "<br>")
+
+  try {
+    formattedAll = formattedAll.replace(/\n/g, "<br>")
+  }
+  catch (ignored) {
+    formattedAll = 'No metadata found'
+  }
+
 
   return (
     <div className="image-info">
@@ -196,7 +202,7 @@ export default function CozyImage(props) {
         <div className="image-wrapper" onClick={openModal}>
           <img
             className="cozy-nest-thumbnail"
-            src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
+            src={`${baseUrl}:${gradioPort}/cozy-nest/image?path=${props.image.path}`}
             alt="image"
             ref={imgRef}/>
         </div>
@@ -205,7 +211,7 @@ export default function CozyImage(props) {
           <div className="image-wrapper">
             <img
               className="cozy-nest-thumbnail"
-              src={`${baseUrl}:${gradioPort}/file=${props.image.path}`}
+              src={`${baseUrl}:${gradioPort}/cozy-nest/image?path=${props.image.path}`}
               alt="image"/>
           </div>
           <CozyFullImageInfo image={props.image} closeModal={toggleModal} imgRef={imgRef}/>

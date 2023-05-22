@@ -51,7 +51,7 @@ const serverPort = (() => {
   }
   catch (e) {
     console.warn('cnib_socket_server_port not found in main gradio app')
-    return 3333;
+    return 3337;
   }
 
 })();
