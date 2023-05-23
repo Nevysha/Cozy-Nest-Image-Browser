@@ -196,13 +196,19 @@ export default function CozyImage(props) {
     setShowModal(true)
   }
 
+  function getSrc() {
+    // url encode path
+    const sanitizedPath = encodeURIComponent(props.image.path)
+    return `${baseUrl}:${gradioPort}/cozy-nest/image?path=${sanitizedPath}`;
+  }
+
   return (
     <div id={`img_${props.index}`} className="image" ref={_me}>
       {onScreen ? (<>
         <div className="image-wrapper" onClick={openModal}>
           <img
             className="cozy-nest-thumbnail"
-            src={`${baseUrl}:${gradioPort}/cozy-nest/image?path=${props.image.path}`}
+            src={getSrc()}
             alt="image"
             ref={imgRef}/>
         </div>
@@ -211,7 +217,7 @@ export default function CozyImage(props) {
           <div className="image-wrapper">
             <img
               className="cozy-nest-thumbnail"
-              src={`${baseUrl}:${gradioPort}/cozy-nest/image?path=${props.image.path}`}
+              src={getSrc()}
               alt="image"/>
           </div>
           <CozyFullImageInfo image={props.image} closeModal={toggleModal} imgRef={imgRef}/>
