@@ -159,7 +159,7 @@ function App() {
   useEffect(() => {
     if (searchStr !== '') {
       const filteredImages = images.filter(image => {
-        if (image.metadata.exif.parameters.includes(searchStr)) {
+        if (image.metadata.exif.includes(searchStr)) {
           console.log(`path: ${image.path}`)
           return true;
         }
