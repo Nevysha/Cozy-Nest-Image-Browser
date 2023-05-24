@@ -103,7 +103,6 @@ function App() {
   const reconnect = () => {
 
     if (readyState === ReadyState.OPEN) {
-      console.log('already connected')
       return;
     }
 
@@ -160,7 +159,6 @@ function App() {
     if (searchStr !== '') {
       const filteredImages = images.filter(image => {
         if (image.metadata.exif.includes(searchStr)) {
-          console.log(`path: ${image.path}`)
           return true;
         }
         else return false;

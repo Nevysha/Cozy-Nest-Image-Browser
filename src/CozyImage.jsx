@@ -187,8 +187,6 @@ export default function CozyImage(props) {
   }, [viewPort])
 
   function toggleModal() {
-    console.log("close modal")
-    console.log(`showModal: ${showModal}`)
     setShowModal(!showModal)
   }
   function openModal() {
